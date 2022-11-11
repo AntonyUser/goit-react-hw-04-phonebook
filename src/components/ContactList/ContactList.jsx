@@ -24,5 +24,12 @@ export const ContactList = ({ contacts, onClick }) => {
 };
 
 ContactList.propTypes = {
-  contacts: PropTypes.array,
+  contacts: PropTypes.arrayOf(
+    PropTypes.exact({
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    })
+  ),
+  onClick: PropTypes.func.isRequired,
 };

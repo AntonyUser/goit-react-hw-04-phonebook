@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Formik, Field } from 'formik';
 import PropTypes from 'prop-types';
 import {
@@ -9,6 +9,7 @@ import {
   Input,
 } from '../ContactForm/ContactForm.styled';
 import * as yup from 'yup';
+import { useState } from 'react';
 
 yup.addMethod(yup.string, 'validation', function () {
   return this.matches(
@@ -28,75 +29,147 @@ const Schema = yup.object().shape({
   number: yup.string().numeric().required(),
 });
 
-class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
-  onChange = e => {
+export const ContactForm = ({ onSubmit }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const onChange = e => {
     const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+
+      case 'number':
+        setNumber(value);
+        break;
+
+      default:
+        break;
+    }
   };
-  resetForm() {
-    this.setState(() => {
-      return {
-        name: '',
-        number: '',
-      };
-    });
-  }
 
-  render() {
-    return (
-      <>
-        <Formik
-          initialValues={{ name: '', number: '' }}
-          validationSchema={Schema}
-          onSubmit={values => {
-            this.props.onSubmit(values);
-            this.resetForm();
-          }}
-        >
-          <Form>
-            <Field as={Label}>
-              <span>Name</span>
-              <Field
-                as={Input}
-                type="text"
-                name="name"
-                value={this.state.name}
-                onChange={this.onChange}
-              />
-              <ErrorMessage name="name" component="div" />
-            </Field>
-            <Field as={Label}>
-              <span>Number</span>
-              <Field
-                as={Input}
-                type="tel"
-                name="number"
-                value={this.state.number}
-                onChange={this.onChange}
-              />
-              <ErrorMessage name="number" component="div" />
-            </Field>
+  const resetForm = () => {
+    setName('');
+    setNumber('');
+  };
 
-            <Button
-              type="submit"
-              disabled={!this.state.name || !this.state.number}
-            >
-              Add contact
-            </Button>
-          </Form>
-        </Formik>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Formik
+        initialValues={{ name: '', number: '' }}
+        validationSchema={Schema}
+        onSubmit={values => {
+          onSubmit(values);
+          resetForm();
+        }}
+      >
+        <Form>
+          <Field as={Label}>
+            <span>Name</span>
+            <Field
+              as={Input}
+              type="text"
+              name="name"
+              value={name}
+              onChange={onChange}
+            />
+            <ErrorMessage name="name" component="div" />
+          </Field>
+          <Field as={Label}>
+            <span>Number</span>
+            <Field
+              as={Input}
+              type="tel"
+              name="number"
+              value={number}
+              onChange={onChange}
+            />
+            <ErrorMessage name="number" component="div" />
+          </Field>
 
-export default ContactForm;
-
+          <Button type="submit" disabled={!name || !number}>
+            Add contact
+          </Button>
+        </Form>
+      </Formik>
+    </>
+  );
+};
 ContactForm.propTypes = {
   onSubmit: PropTypes.func,
   onChange: PropTypes.func,
 };
+
+// class ContactForm extends Component {
+//   state = {
+//     name: '',
+//     number: '',
+//   };
+//   onChange = e => {
+//     const { name, value } = e.currentTarget;
+//     this.setState({ [name]: value });
+//   };
+//   resetForm() {
+//     this.setState(() => {
+//       return {
+//         name: '',
+//         number: '',
+//       };
+//     });
+//   }
+
+//   render() {
+//     return (
+//       <>
+//         <Formik
+//           initialValues={{ name: '', number: '' }}
+//           validationSchema={Schema}
+//           onSubmit={values => {
+//             this.props.onSubmit(values);
+//             this.resetForm();
+//           }}
+//         >
+//           <Form>
+//             <Field as={Label}>
+//               <span>Name</span>
+//               <Field
+//                 as={Input}
+//                 type="text"
+//                 name="name"
+//                 value={this.state.name}
+//                 onChange={this.onChange}
+//               />
+//               <ErrorMessage name="name" component="div" />
+//             </Field>
+//             <Field as={Label}>
+//               <span>Number</span>
+//               <Field
+//                 as={Input}
+//                 type="tel"
+//                 name="number"
+//                 value={this.state.number}
+//                 onChange={this.onChange}
+//               />
+//               <ErrorMessage name="number" component="div" />
+//             </Field>
+
+//             <Button
+//               type="submit"
+//               disabled={!this.state.name || !this.state.number}
+//             >
+//               Add contact
+//             </Button>
+//           </Form>
+//         </Formik>
+//       </>
+//     );
+//   }
+// }
+
+// export default ContactForm;
+
+// ContactForm.propTypes = {
+//   onSubmit: PropTypes.func,
+//   onChange: PropTypes.func,
+// };
